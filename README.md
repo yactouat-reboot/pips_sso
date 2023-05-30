@@ -48,8 +48,13 @@ In C++, a pointer is a variable that holds the memory address of another variabl
 
 ```cpp
 int x = 1
-int* p; // this is the pointer
-p = &x; // assign the address of x to p
+int* p; // this is the pointer, it's declared to point to an integer
+p = &x; // assign the address of x to p, the `&` operator is used to get the address of the variable
+
+std::cout << "value of x: " << x << std::endl;
+std::cout << "address of x: " << &x << std::endl;
+std::cout << "value of p: " << p << std::endl; // outputs the same address than x
+std::cout << "value of *p: " << *p << std::endl; // outputs the same value than the value of x, this is called "de referencing" the pointer
 ```
 
 Pointers are used for:
@@ -78,13 +83,48 @@ int main() {
         arrPointer[i] = "some processing result";
     }
 
-    // deallocate the memory when we're done with the array
-    delete[] arr;
+    /**
+     * deallocate the memory when we're done with the array,
+     * `delete[]` releases dynamic memory that was previously allocated with the `new[]` operator;
+     * ! it's crucial to match `new[]` and `delete[]` properly; for instance if you allocate a single element with `new`, then you deallocate it with a single `delete`
+     * once you have deallocated the memory on a given pointer, you can not re use that pointer later in your program
+     * */
+    delete[] arrPointer;
 
     // exiting the program
     return 0;
 }
 ```
+
+## What macros are
+
+- In C++, a macro is a fragment of code which is given a name; you can define macros using the `#define` preprocessor directive; once a macro is defined, the compiler replaces all occurrences of the macro in the code with its definition during the pre processing stage (before the actual compilation).
+- See an example of a macro usage =>
+
+```cpp
+#define PI 3.14159
+
+int main() {
+    double radius = 5.0;
+    double area = PI * radius * radius; // PI will be replaced by the defined value here
+    return 0;
+}
+```
+
+- Macros can also take arguments =>
+
+```cpp
+#define PI 3.14159
+#define SQUARE(x) ((x) * (x))
+
+int main() {
+    double radius = 5.0;
+    double area = PI * SQUARE(radius);
+    return 0;
+}
+```
+
+- Macros just do simple text substitution, they don't respect scopes or data types. They are notoriously hard to debug. So they are not considered as a very good practice.
 
 ## What we will use
 

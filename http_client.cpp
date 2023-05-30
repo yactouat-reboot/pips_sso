@@ -14,4 +14,14 @@ using namespace web::http::client;
  * @return program exist code
  */
 int main(int argc, char* argv[]) {
+
+    /**
+     * creating a HTTP client;
+     * `U("http://google.com")` is the constructor's argument;
+     *  - `U()` is a macro
+     *  - once we have instantiated the client, "http://google.com" will be its base URL to make requests
+    */
+    http_client client(U("http://google.com"));
+
 }
+
