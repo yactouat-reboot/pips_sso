@@ -169,7 +169,8 @@ int main() {
 
 - To build our solution, we will need some kind of way to send HTTP requests and process JSON responses without too much overhead.
 - For this, we are going to use the Microsoft C++ REST SDK (_Casablanca_), you can find the repo [here](https://github.com/microsoft/cpprestsdk).
-- To install this lib, you'll need to run => `sudo apt update && sudo apt upgrade -y && sudo apt-get install build-essential libcpprest-dev`.
+- To install this lib, you'll need to run => `sudo apt update && sudo apt upgrade -y && sudo apt-get install build-essential libcpprest-dev`
+- also make sure that you have `openssl` installed on your machine
 - Let's try to write [an HTTP client](./http_client.cpp) for starters.
 
 ## Build the HTTP client: we need CMake
