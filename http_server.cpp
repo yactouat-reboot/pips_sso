@@ -46,27 +46,31 @@ class OIDCRedirectHandler {
         }
 
     protected:
-        void handle_get(http_request message) {
+        void handle_get(http_request req) {
 
             // get the path for the request we use the `auto` keyword for type inference
-            auto path = uri::decode(message.relative_uri().path());
+            auto path = uri::decode(req.relative_uri().path());
 
             if(path == U("/oidc-redirect")) {
                 /*
                 * extract the authorization code from the URL
                 */
-                auto http_get_vars = uri::split_query(message.request_uri().query());
+                auto http_get_vars = uri::split_query(req.request_uri().query());
                 auto code = http_get_vars[U("code")]; // empty string if no query param called 'code'
                 // TODO get the user's intended redirect URI
 
-                // TODO OIDC: Proceed with exchanging the aut (consider https://github.com/CrowCpp/Crow or horization code for an ID token
+                // TODO OIDC: Proceed with exchanging the authorization code) for an ID token
 
                 // Send a response to the client
-                message.reply(status_codes::OK, U("Received authorization code: ") + code);
+                req.reply(status_codes::OK, U("Received authorization code: ") + code);
             } else if (path == U("/protected")) {
-                message.reply(status_codes::OK, U("This is a protected route"));
+                // get Bearer token from request headers
+                auto auth_header = req.headers()[U("Authorization")];
+                req.reply(status_codes::OK, U("this is the provided token: ") + auth_header);
+                // TODO: Verify the token. This usually involves making a request to the OIDC provider
+                // TODO: Depending on the outcome of the token verification, adjust the response
             } else {
-                message.reply(status_codes::NotFound, U("Not found"));
+                req.reply(status_codes::NotFound, U("Not found"));
             }
 
         }
@@ -85,6 +89,10 @@ int main() {
     OIDCRedirectHandler handler(address);
     handler.open().wait();
 
+    /**
+     * ucout is an output stream object in C++ that is used to write Unicode characters to the console. 
+     * It is defined in the cpprest/details/basic_types.h header file of the Casablanca library.
+    */
     ucout << utility::string_t(U("Listening for requests at: ")) << address << std::endl;
 
     std::string line;
