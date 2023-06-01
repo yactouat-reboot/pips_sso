@@ -1,9 +1,3 @@
----
-date: "2023-05-30"
-slug: "building-a-sso-in-cpp"
-title: "Building a SSO in C++"
----
-
 So, I want to learn C++, and I mean business. I somehow want to build my own SSO service for my apps, that will be a harsh but perfect introduction to that language. 
 
 My development environment will be VS Code in Ubuntu (whether WSL 2 or the real thing).
@@ -175,70 +169,11 @@ int main() {
 }
 ```
 
-## What we will use
-
-- To build our solution, we will need some kind of way to send HTTP requests and process JSON responses without too much overhead.
-- For this, we are going to use the Microsoft C++ REST SDK (_Casablanca_), you can find the repo [here](https://github.com/microsoft/cpprestsdk).
-- To install this lib, you'll need to run => `sudo apt update && sudo apt upgrade -y && sudo apt-get install build-essential libcpprest-dev`
-- also make sure that you have `openssl` installed on your machine
-- Let's try to write [an HTTP client](./http_client.cpp) for starters.
-
-## Build the HTTP client: we need CMake
-
-- Since we are using an external library, we are in a position in which trying to build the app' without the relevant tooling would cause too much overhead: e.g. we need to link the C++ REST SDK in our build system. To do that, we are going to use _CMake_ to build our app'.
-- CMake is a cross-platform, open-source build system generator. It is used to manage the build process of software projects in a compiler-independent manner. The build process can be quite complex, especially for large projects that include many source files, have many dependencies, or need to be built on different platforms or with different compilers.
-- When you use CMake, you create one or more `CMakeLists.txt` files that describe how your project should be built. These files include information such as:
-  - which source files to compile
-  - which libraries to link
-  - where to find dependencies
-  - how to organize the output binaries
-  - any special compilation flag or options that are needed
-- Once you've created your `CMakeLists.txt` files, you run CMake to generate the actual build system.
-- Here is an example of a `CMakeLists.txt` file:
-
-    ```cmake
-    cmake_minimum_required(VERSION 3.10)
-    project(MyProject)
-
-    set(CMAKE_CXX_STANDARD 17)
-
-    add_executable(MyProject main.cpp)
-    ```
-
-    ... this:
-    - sets the minimum version of CMake that is required to build the project
-    - names the project
-    - sets the C++ standard to C++17
-    - adds an executable target called `MyProject` that is built from the `main.cpp` source file
-
-    ... you would run then run CMake to generate the build system:
-
-    ```bash
-    mkdir build
-    cd build
-    cmake ..
-    make
-    ```
-
-    ... this:
-    - creates a `build` directory to store the build artifacts
-    - generates makes files within that directory
-    - compiles the project
-
-## use CMake to build our HTTP client
-
-- `sudo apt install cmake`
-- create the [`CMakeLists.txt`](./CMakeLists.txt) file
-- `cmake -S . -B ./build`
-  - this will output a lot of files in the `./build` directory that can safely be git ignored
-- `make -C build`, this should automatically make the executable marked as such in the `./build` directory
-- you can now call the client with `./HttpClient`
-
-## creating a webservice in C++
+## Creating a webservice in C++
 
 As we are trying to build an SSO system, we need 3 parties:
 - the client
 - the requested service
 - the identity provider
 
-Until now, we have built a test HTTP client, now let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extracts the path and query parameters from them.
+Let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extracts the path and query parameters from them. We also have implemented a not found route.

@@ -1,3 +1,5 @@
+// TODO find better alternatives than Casablanca for C++ REST API ?
+
 #include <cpprest/http_listener.h>
 #include <cpprest/json.h>
 
@@ -55,6 +57,7 @@ class OIDCRedirectHandler {
                 */
                 auto http_get_vars = uri::split_query(message.request_uri().query());
                 auto code = http_get_vars[U("code")]; // empty string if no query param called 'code'
+                // TODO get the user's intended redirect URI
 
                 // TODO OIDC: Proceed with exchanging the authorization code for an ID token
 
