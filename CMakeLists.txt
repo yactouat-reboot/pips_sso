@@ -10,6 +10,8 @@ find_package(OpenSSL REQUIRED)
 find_package(cpprestsdk REQUIRED)
 
 add_executable(HttpClient http_client.cpp)
+add_executable(HttpServer http_server.cpp)
 
 # Link the C++ Rest SDK to your target
 target_link_libraries(HttpClient PRIVATE cpprestsdk::cpprest OpenSSL::SSL) 
+target_link_libraries(HttpServer PRIVATE cpprestsdk::cpprest OpenSSL::SSL) 

@@ -28,7 +28,7 @@ First, let's dust off by reviewing some notions about SSO.
         User-->>Service: Attempts to access an auth protected resource
         Service-->>User: Redirects to OP with an authentication request
         User-->>OP: Login
-        OP-->>User: Asks for user consent to share specific data with the service
+        OP-->>User: Asks for user consent to share specific data with the requested service
         User-->>OP: Gives consent
         OP-->>User: Redirects back to Service with an authorization code (as a URL query param)
         User-->>Service: Delivers authorization code
@@ -42,6 +42,15 @@ First, let's dust off by reviewing some notions about SSO.
 - In OIDC, the access token is used to allow a given service in the system to perform certain actions on behalf of the user.
 
 Alright, now that we have the broad lines, let's try to write our first lines of SSO code with C++. However, understanding some basic notions will be necessary before proceeding...
+
+## What is C++ ?
+
+C++ is a cross platforms language that implements OOP. Use-cases of this language are basically anything:
+- games
+- high performance/low latency applications (such as financial apps)
+- server applications
+- GUIs
+- etc.
 
 ## What C++ pointers are
 
@@ -232,6 +241,4 @@ As we are trying to build an SSO system, we need 3 parties:
 - the requested service
 - the identity provider
 
-Until now, we have built a test HTTP client, now let's create a [test HTTP webservice](./http_server.cpp) that will answer to the client's requests.
-
-While writing this simple HTTP server, I learned that this is a common practice in C++ to separate the declaration of a class for the definition (implementation) of its methods. This is even encouraged with the pattern 'header + source' files. This is mainly for maintainability purposes.
+Until now, we have built a test HTTP client, now let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extracts the path and query parameters from them.
