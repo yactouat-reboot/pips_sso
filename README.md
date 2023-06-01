@@ -17,6 +17,7 @@ First, let's dust off by reviewing some notions about SSO.
     - the client (the user trying to authenticate)
     - the relying party (the service the client tries to access)
     - the identity provider (the service that knows the user's credentials and that can authenticate them)
+- OpenID Connect (OIDC) is a common architecture for SSO systems, in these systems, the requested service is responsible for redirecting the user's browser to an OIDC provider.
 - OIDC is based on _OAuth 2.0_, the OIDC workflow can be represented as follows:
 
     ```mermaid
@@ -219,7 +220,18 @@ int main() {
 
 - `sudo apt install cmake`
 - create the [`CMakeLists.txt`](./CMakeLists.txt) file
-- `cmake .`
-  - this will output a lot of files that can safely be git ignored
-- `make`, this should automatically make the executable marked as such
+- `cmake -S . -B ./build`
+  - this will output a lot of files in the `./build` directory that can safely be git ignored
+- `make -C build`, this should automatically make the executable marked as such in the `./build` directory
 - you can now call the client with `./HttpClient`
+
+## creating a webservice in C++
+
+As we are trying to build an SSO system, we need 3 parties:
+- the client
+- the requested service
+- the identity provider
+
+Until now, we have built a test HTTP client, now let's create a [test HTTP webservice](./http_server.cpp) that will answer to the client's requests.
+
+While writing this simple HTTP server, I learned that this is a common practice in C++ to separate the declaration of a class for the definition (implementation) of its methods. This is even encouraged with the pattern 'header + source' files. This is mainly for maintainability purposes.
