@@ -31,14 +31,22 @@ First, let's dust off by reviewing some notions about SSO.
             User-->>Service: Delivers authorization code
             Service-->>OP: Sends authorization code
             OP-->>Service: Sends ID and access tokens
-            Service-->>OP: Sends access token (user info request)
-            OP-->>Service: Sends user info (user info response)
+            opt if the service needs more info about the user
+                Service-->>OP: Sends access token (user info request)
+                OP-->>Service: Sends user info (user info response)
+            end
             Service->>User: Provides access to protected resource
         end
     ```
 
+- In OIDC:
+  - when the requested service sends the authorization code to the OIDC provider, it does it outside of the user's browser, and it also includes its service id and secret: this ensures that the authorization codeis being used by the same client application that initially triggered the authentication flow
+  - this request containing the authorization code is answered by the OIDC provider with an access token and an ID token
+    - the ID token is a JSON Web Token (JWT) that contains information about the user (for intance, their username, or the time of their last login)
+    - the access token is used to allow the requesting service in the system to perform certain actions on behalf of the user
+    - this is the service's responsibility to store both these tokens securely
+  - the additional user info request made by a service is optional, the specific set of information that is returned depends on what the user has consented to share with the service
 - You will often find SSO implementations using _OpenID Connect_ (OIDC) in the wild.
-- In OIDC, the access token is used to allow a given service in the system to perform certain actions on behalf of the user.
 
 Alright, now that we have the broad lines, let's try to write our first lines of SSO code with C++. However, understanding some basic notions will be necessary before proceeding...
 
@@ -181,6 +189,61 @@ As we are trying to build an SSO system, we need 3 parties:
 - the requested service
 - the identity provider
 
-Let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extracts the path and query parameters from them. We also have implemented a not found route.
+Let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extract some information from the request:
+  - the path 
+  - query parameters
+  - headers 
+  
+(Trivia: I have been baffled by the fact that there are no switch/case statements for strings in C++.)
 
-Trivia: I have been baffled by the fact that there are no switch/case statements for strings in C++.
+Basically, our test server will represent the webservice that hosts an auth protected resource.
+
+## Get on the right track: handle errors, modularize and test my code
+
+We didn't write much code yet, but before it becomes a nightmare, let's split the code, test it, handle errors, etc.
+
+### Splitting the code + folder structure
+
+After browsing the web, I've learned that a typical C++ project structure can look like this:
+
+```cpp
+Project/
+├── src/
+│   ├── main.cpp
+│   ├── foo.cpp
+│   ├── foo.h
+│   ├── bar/
+│   │   ├── bar.cpp
+│   │   └── bar.h
+│   └── baz.h
+├── include/
+│   └── Project.h
+├── test/
+│   ├── test_main.cpp
+│   ├── test_foo.cpp
+│   └── test_bar.cpp
+├── doc/
+│   ├── Doxyfile
+│   └── index.md
+├── bin/
+│   ├── debug/
+│   │   └── Project.exe
+│   └── release/
+│       └── Project.exe
+└── lib/
+    ├── boost/
+    │   ├── boost.dll
+    │   └── boost.lib
+    └── qt/
+        ├── qt.dll
+        └── qt.lib
+
+```
+
+... although I won't follow this pattern exactly, I did try to take it as a reference. As I did, I learned a lot about includes, how to compile a project sub directories, how to link libraries, how to split code in C++, etc.
+
+Now, to build our project, we'll need to run:
+
+- `cmake -S . -B ./bin` to generate the build files
+- `make -C ./bin` to build the project
+- `./bin/HttpDevService` to run the project

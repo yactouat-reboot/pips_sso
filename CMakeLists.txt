@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(OIDC)
+project(PIPS_SSO)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -9,7 +9,13 @@ find_package(OpenSSL REQUIRED)
 # Find the C++ Rest SDK package
 find_package(cpprestsdk REQUIRED)
 
-add_executable(HttpServer http_server.cpp)
+# tell cmake where to find the include dir
+include_directories(./include)
+
+# Create a list of all source files in the src directory
+file(GLOB SOURCES "./src/*.cpp" "./src/*/*.cpp")
+
+add_executable(HttpDevService ${SOURCES})
 
 # Link the C++ Rest SDK to your target
-target_link_libraries(HttpServer PRIVATE cpprestsdk::cpprest OpenSSL::SSL) 
+target_link_libraries(HttpDevService PRIVATE cpprestsdk::cpprest OpenSSL::SSL) 
