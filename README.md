@@ -19,17 +19,22 @@ First, let's dust off by reviewing some notions about SSO.
         participant User
         participant Service
         participant OP as OpenID Connect Provider
-        User-->>Service: Attempts to access an auth protected resource
-        Service-->>User: Redirects to OP with an authentication request
-        User-->>OP: Login
-        OP-->>User: Asks for user consent to share specific data with the requested service
-        User-->>OP: Gives consent
-        OP-->>User: Redirects back to Service with an authorization code (as a URL query param)
-        User-->>Service: Delivers authorization code
-        Service-->>OP: Sends authorization code
-        OP-->>Service: Sends ID and access tokens
-        Service-->>OP: Sends access token (user info request)
-        OP-->>Service: Sends user info (user info response)
+        User-->>Service: Attempts to access an auth protected resource (Bearer Token in headers are necessary)
+        alt Token is valid and has sufficient permissions
+            Service->>User: Provides access to protected resource
+        else Token is invalid, missing, or lacks sufficient permissions
+            Service-->>User: Redirects to OP with an authentication request
+            User-->>OP: Login
+            OP-->>User: Asks for user consent to share specific data with the requested service
+            User-->>OP: Gives consent
+            OP-->>User: Redirects back to Service with an authorization code (as a URL query param)
+            User-->>Service: Delivers authorization code
+            Service-->>OP: Sends authorization code
+            OP-->>Service: Sends ID and access tokens
+            Service-->>OP: Sends access token (user info request)
+            OP-->>Service: Sends user info (user info response)
+            Service->>User: Provides access to protected resource
+        end
     ```
 
 - You will often find SSO implementations using _OpenID Connect_ (OIDC) in the wild.
@@ -177,3 +182,5 @@ As we are trying to build an SSO system, we need 3 parties:
 - the identity provider
 
 Let's start to create a [test HTTP server](./http_server.cpp) that will provide an example of a requested service. In this file, we have learned how to process GET requests and extracts the path and query parameters from them. We also have implemented a not found route.
+
+Trivia: I have been baffled by the fact that there are no switch/case statements for strings in C++.

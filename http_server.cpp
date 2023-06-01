@@ -1,4 +1,4 @@
-// TODO find better alternatives than Casablanca for C++ REST API ?
+// TODO find better alternatives than Casablanca for C++ REST API ? (consider https://github.com/CrowCpp/Crow or https://github.com/drogonframework/drogon)
 
 #include <cpprest/http_listener.h>
 #include <cpprest/json.h>
@@ -59,10 +59,12 @@ class OIDCRedirectHandler {
                 auto code = http_get_vars[U("code")]; // empty string if no query param called 'code'
                 // TODO get the user's intended redirect URI
 
-                // TODO OIDC: Proceed with exchanging the authorization code for an ID token
+                // TODO OIDC: Proceed with exchanging the aut (consider https://github.com/CrowCpp/Crow or horization code for an ID token
 
                 // Send a response to the client
                 message.reply(status_codes::OK, U("Received authorization code: ") + code);
+            } else if (path == U("/protected")) {
+                message.reply(status_codes::OK, U("This is a protected route"));
             } else {
                 message.reply(status_codes::NotFound, U("Not found"));
             }
